@@ -41,7 +41,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data in ['start', 'another']:
         dog_url = get_random_dog()
         await query.message.reply_photo(dog_url, caption="here`s your doggo 🐶")
-    elif query.data == 'stop'
+    elif query.data == 'stop':
         await query.message.reply_text("ok, enough for today 🛑")
 
 async def main():
