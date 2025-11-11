@@ -16,6 +16,7 @@ logging.basicConfig(
 def get_random_dog():
     url = "https://random.dog/woof.json"
     response = requests.get(url).json()
+    # Исключаем видео
     while response['url'].endswith(('.mp4', '.webm')):
         response = requests.get(url).json()
     return response['url']
@@ -23,7 +24,6 @@ def get_random_dog():
 def main_keyboard():
     keyboard = [
         [InlineKeyboardButton("start", callback_data='start')],
-        [InlineKeyboardButton("another doggo", callback_data='another')],
         [InlineKeyboardButton("stop", callback_data='stop')]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -36,7 +36,7 @@ def photo_keyboard():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "hi! i`ll send you a random doggo picture with every click 🐶",
+        "hi! I`ll send you a random doggo picture 🐶",
         reply_markup=main_keyboard()
     )
 
@@ -46,12 +46,16 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if query.data in ['start', 'another']:
         dog_url = get_random_dog()
-        await query.message.reply_photo(dog_url, caption="here`s your doggo 🐶")
+        await query.message.reply_photo(
+            dog_url, 
+            caption="here`s your doggo 🐶", 
+            reply_markup=photo_keyboard()
+        )
     elif query.data == 'stop':
         await query.message.reply_text("ok, enough for today 🛑")
 
 async def main():
-    TOKEN = "your_token_here"  
+    TOKEN = "your_token_here"
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
@@ -61,4 +65,3 @@ async def main():
 
 import asyncio
 asyncio.get_event_loop().run_until_complete(main())
-
