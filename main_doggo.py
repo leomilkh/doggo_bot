@@ -1,9 +1,12 @@
-!pip install python-telegram-bot==20.5 requests --quiet
+!pip install python-telegram-bot==20.5 requests nest_asyncio --quiet
 
 import logging
 import requests
+import nest_asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+
+nest_asyncio.apply()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -13,7 +16,6 @@ logging.basicConfig(
 def get_random_dog():
     url = "https://random.dog/woof.json"
     response = requests.get(url).json()
-    # Убедимся, что это изображение (не видео)
     while response['url'].endswith(('.mp4', '.webm')):
         response = requests.get(url).json()
     return response['url']
@@ -21,14 +23,14 @@ def get_random_dog():
 def main_keyboard():
     keyboard = [
         [InlineKeyboardButton("start", callback_data='start')],
-        [InlineKeyboardButton("stop", callback_data='stop')],
-        [InlineKeyboardButton("another doggo", callback_data='another')]
+        [InlineKeyboardButton("another doggo", callback_data='another')],
+        [InlineKeyboardButton("stop", callback_data='stop')]
     ]
     return InlineKeyboardMarkup(keyboard)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "hi! i'll send you a random picture of a dog 🐶",
+        "hi! i`ll send you a random doggo picture with every click 🐶",
         reply_markup=main_keyboard()
     )
 
@@ -36,26 +38,20 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
-    if query.data == 'start':
+    if query.data in ['start', 'another']:
         dog_url = get_random_dog()
         await query.message.reply_photo(dog_url, caption="here`s your doggo 🐶")
-    elif query.data == 'another':
-        dog_url = get_random_dog()
-        await query.message.reply_photo(dog_url, caption="here`s another one 🐶")
-    elif query.data == 'stop':
+    elif query.data == 'stop'
         await query.message.reply_text("ok, enough for today 🛑")
 
 async def main():
-    TOKEN = "your_token_here"
-
+    TOKEN = "your_token_here"  
     app = ApplicationBuilder().token(TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
 
-    print("bot activated...")
+    print("bot is activated...")
     await app.run_polling()
 
-if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+import asyncio
+asyncio.get_event_loop().run_until_complete(main())
