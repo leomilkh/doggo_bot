@@ -1,3 +1,5 @@
+!pip install python-telegram-bot==20.5 requests --quiet
+
 import logging
 import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
