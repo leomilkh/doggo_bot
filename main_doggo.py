@@ -28,6 +28,12 @@ def main_keyboard():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def photo_keyboard():
+    keyboard = [
+        [InlineKeyboardButton("another doggo", callback_data='another')]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "hi! i`ll send you a random doggo picture with every click 🐶",
@@ -55,3 +61,4 @@ async def main():
 
 import asyncio
 asyncio.get_event_loop().run_until_complete(main())
+
