@@ -16,7 +16,6 @@ logging.basicConfig(
 def get_random_dog():
     url = "https://random.dog/woof.json"
     response = requests.get(url).json()
-    # Исключаем видео
     while response['url'].endswith(('.mp4', '.webm')):
         response = requests.get(url).json()
     return response['url']
@@ -65,3 +64,4 @@ async def main():
 
 import asyncio
 asyncio.get_event_loop().run_until_complete(main())
+
